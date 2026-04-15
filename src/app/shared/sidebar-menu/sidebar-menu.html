@@ -1,0 +1,41 @@
+<mat-nav-list class="menu">
+    <a  mat-list-item
+        routerLink="/home"
+        matListItemTitle
+        routerLinkActive
+        #rla="routerLinkActive"
+        [activated]="rla.isActive">
+            <mat-icon matListItemIcon>home</mat-icon>
+            <span matListItemTitle>Home</span>
+    </a>
+
+    <a  mat-list-item
+        routerLink="/alumnos"
+        matListItemTitle
+        routerLinkActive
+        #rlaAlumnos="routerLinkActive"
+        [activated]="rlaAlumnos.isActive">
+            <mat-icon matListItemIcon>account_circle</mat-icon>
+            <span matListItemTitle>Alumnos</span>
+    </a>
+
+    <a  mat-list-item
+        routerLink="/maestros"
+        matListItemTitle
+        routerLinkActive
+        #rlaMaestros="routerLinkActive"
+        [activated]="rlaMaestros.isActive">
+            <mat-icon matListItemIcon>account_box</mat-icon>
+            <span matListItemTitle>Maestros</span>
+    </a>
+
+    <a  mat-list-item
+        routerLink="/calificaciones"
+        matListItemTitle
+        routerLinkActive
+        #rlaCalificaciones="routerLinkActive"
+        [activated]="rlaCalificaciones.isActive">
+        <mat-icon matListItemIcon>assignment</mat-icon>
+        <span matListItemTitle>Calificaciones</span>
+    </a>
+</mat-nav-list>

@@ -1,0 +1,43 @@
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 600;
+  font-size: 14px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+  transition: all 0.2s ease;
+  cursor: pointer;
+  line-height: 1;
+}
+
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.menu-user {
+  padding: 0.75rem 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.menu-user-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.menu-user-email {
+  font-size: 0.8rem;
+  color: #6b7280;
+}

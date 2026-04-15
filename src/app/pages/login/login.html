@@ -1,0 +1,103 @@
+<main class="login-page">
+  <section class="login-card" aria-label="Formulario de inicio de sesion">
+    <div class="icon-wrapper" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <h1>Bienvenido</h1>
+    <p class="subtitle">Ingresa tus credenciales para continuar</p>
+
+    <form [formGroup]="form" novalidate (submit)="onSubmit()">
+      <div class="field-group">
+        <label for="email">Correo electronico</label>
+        <div class="input-wrapper" [class.input-error]="emailControl.invalid && (emailControl.touched || emailControl.dirty)">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <input
+            id="email"
+            type="email"
+            placeholder="tu@email.com"
+            autocomplete="email"
+            formControlName="email"
+          />
+        </div>
+        <p class="error-msg" *ngIf="emailControl.touched || emailControl.dirty">
+          <span *ngIf="emailControl.hasError('required')">El correo es requerido.</span>
+          <span *ngIf="!emailControl.hasError('required') && emailControl.hasError('email')">El formato del correo no es válido.</span>
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label for="password">Contrasena</label>
+        <div class="input-wrapper" [class.input-error]="passwordControl.invalid && (passwordControl.touched || passwordControl.dirty)">
+          <span class="input-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="********"
+            autocomplete="current-password"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            (click)="togglePassword()"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </button>
+        </div>
+        <p class="error-msg" *ngIf="passwordControl.touched || passwordControl.dirty">
+          <span *ngIf="passwordControl.hasError('required')">La contraseña es obligatoria.</span>
+          <span *ngIf="!passwordControl.hasError('required') && passwordControl.hasError('minlength')">La contraseña debe tener minimo 6 caracteres.</span>
+        </p>
+      </div>
+
+      <div class="options-row">
+        <label class="checkbox-row">
+          <input type="checkbox" />
+          <span>Recordarme</span>
+        </label>
+        <a href="#" class="muted-link">Olvidaste tu contrasena?</a>
+      </div>
+
+      <p class="error-msg general-error" *ngIf="authError">{{ authError }}</p>
+
+      <button class="submit-btn" type="submit" [disabled]="form.invalid">Iniciar sesion</button>
+
+      <div class="divider"><span>O continua con</span></div>
+
+      <div class="social-row">
+        <button type="button" class="social-btn">
+          <span class="social-icon google">G</span>
+          <span>Google</span>
+        </button>
+        <button type="button" class="social-btn">
+          <span class="social-icon facebook">f</span>
+          <span>Facebook</span>
+        </button>
+      </div>
+    </form>
+
+    <p class="register-row">
+      No tienes una cuenta?
+      <a href="#">Registrate aqui</a>
+    </p>
+  </section>
+</main>
+

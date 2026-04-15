@@ -1,0 +1,8 @@
+<main style="min-height: 100dvh;display: grid;place-items: center;background-color: #f4f7ff;">
+    <section style="background-color: white;padding: 2rem;border-radius: 14px;box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+        <h2>Home protegido</h2>
+        <p>Bienvenido, {{auth.currentUser()?.name}}</p>
+        <p>Email {{auth.currentUser()?.email}}</p>
+        <button (click)="logout()">Cerrar Sesion</button>
+    </section>
+</main>

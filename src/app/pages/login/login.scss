@@ -1,0 +1,270 @@
+
+:host {
+  display: block;
+  min-height: 100dvh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1a2340;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: #e6ebf8;
+}
+
+.login-card {
+  width: min(100%, 460px);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 16px 32px rgba(48, 63, 106, 0.12);
+}
+
+.icon-wrapper {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  margin: 0 auto 1.2rem;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, #5f50ff, #3d36dd);
+  color: #ffffff;
+}
+
+.icon-wrapper svg {
+  width: 30px;
+  height: 30px;
+}
+
+h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 2.15rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0.6rem 0 1.75rem;
+  text-align: center;
+  color: #5f6a89;
+  font-size: 1rem;
+}
+
+form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 50px;
+  border: 1px solid #c7ccdd;
+  border-radius: 12px;
+  padding: 0 0.8rem;
+  background: #ffffff;
+}
+
+.input-wrapper:focus-within {
+  border-color: #5e52ff;
+  box-shadow: 0 0 0 3px rgba(95, 82, 255, 0.12);
+}
+
+.input-wrapper.input-error {
+  border-color: #c71e42;
+}
+
+.input-icon,
+.toggle-password {
+  flex-shrink: 0;
+  color: #9ba4bb;
+}
+
+.input-icon svg,
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+}
+
+input[type='email'],
+input[type='password'],
+input[type='text'] {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #1f2a48;
+  font-size: 0.98rem;
+}
+
+input::placeholder {
+  color: #a1a9be;
+}
+
+.toggle-password {
+  border: 0;
+  background: transparent;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+}
+
+.muted-link {
+  font-size: 0.95rem;
+  color: #4f46ff;
+  text-decoration: none;
+}
+
+.muted-link:hover,
+.register-row a:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  border: 0;
+  border-radius: 12px;
+  min-height: 50px;
+  padding: 0.8rem 1rem;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(140deg, #5f50ff, #3d36dd);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 16px rgba(77, 67, 235, 0.22);
+}
+
+.submit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-msg {
+  margin: -0.2rem 0 0;
+  color: #c71e42;
+  font-size: 0.9rem;
+}
+
+.general-error {
+  margin: 0;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  color: #7f87a2;
+  margin: 0.25rem 0;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  border-top: 1px solid #d6dae6;
+}
+
+.divider span {
+  position: relative;
+  background: #ffffff;
+  padding: 0 0.8rem;
+  font-size: 0.95rem;
+}
+
+.social-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.social-btn {
+  min-height: 44px;
+  border: 1px solid #c7ccdd;
+  border-radius: 12px;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: #273256;
+  cursor: pointer;
+}
+
+.social-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.social-icon.google {
+  color: #db4437;
+}
+
+.social-icon.facebook {
+  color: #1877f2;
+}
+
+.register-row {
+  margin: 1.7rem 0 0;
+  text-align: center;
+  color: #3f4967;
+}
+
+.register-row a {
+  color: #4f46ff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+@media (max-width: 520px) {
+  .login-card {
+    padding: 1.5rem 1.1rem;
+    border-radius: 14px;
+  }
+
+  .social-row {
+    grid-template-columns: 1fr;
+  }
+}
