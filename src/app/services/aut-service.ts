@@ -1,4 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { environment } from '../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable, tap } from 'rxjs';
 
 export interface SessionUser {
   id: number;
@@ -6,42 +9,37 @@ export interface SessionUser {
   email: string;
 }
 
+interface LoginResponse {
+  token: string;
+  message: string;
+  user: SessionUser;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AutService {
-  mockedUsers: any[] = [
-    { id: 1, name: 'Jose', email: 'admin@demo.com', password: '123456' },
-    { id: 2, name: 'Paola', email: 'user@demo.com', password: 'abcdef' }
-  ];
+  private http = inject(HttpClient);
 
   private readonly storageKey = 'session_user';
-
+  private readonly storageKeyToken = 'session_token';
+  private readonly loginUrl = `${environment.apiUrl}/auth/login`;
+  
   private readonly _currentUser = signal<SessionUser | null>(this.readFromStorage());
 
   readonly currentUser = computed(() => this._currentUser());
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
 
 
-  login(email: string, password: string) : boolean {
-    const existe = this.mockedUsers.find(
-      u => u.email.toLowerCase() === email.toLocaleLowerCase().trim() &&
-        u.password.toLowerCase() === password.toLocaleLowerCase().trim()
+  login(email: string, password: string) : Observable<SessionUser> {
+    return this.http.post<LoginResponse>(this.loginUrl, { email, password }).pipe(
+      tap((response) => {
+        localStorage.setItem(this.storageKey,response.token);
+        localStorage.setItem(this.storageKey, JSON.stringify(response.user));
+        this._currentUser.set(response.user);
+    }),
+      map((response) => response.user)
     );
-
-    if(!existe) return false;
-
-    const sessionUser : SessionUser = {
-      id: existe.id,
-      name: existe.name,
-      email: existe.email
-    };
-
-    localStorage.setItem(this.storageKey, JSON.stringify(sessionUser));
-
-    this._currentUser.set(sessionUser);
-
-    return true;
   }
 
   readFromStorage() : SessionUser | null {

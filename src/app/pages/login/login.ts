@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutService } from '../../services/aut-service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -39,21 +40,17 @@ export class Login {
   }
 
   onSubmit() {
-    this.authError = null;
+    console.log(this.form.value);
+    const { email, password } = this.form.value;
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const { email, password } = this.form.getRawValue();
-    const valido = this.auth.login(email, password);
-
-    if (valido) {
-      this.router.navigate(['/home']);
-      return;
-    }
-
-    this.authError = 'Credenciales inválidas. Verifica tu correo y contraseña.';
+    this.auth.login(email!, password!)
+    .subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+        console.log(error.status);
+      }
+    });
+    //this.authError = 'Credenciales inválidas. Verifica tu correo y contraseña.';
   }
 }

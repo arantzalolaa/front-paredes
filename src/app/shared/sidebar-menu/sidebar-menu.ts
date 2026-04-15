@@ -15,6 +15,7 @@ export class SidebarMenu {
     { name: 'Alumnos', link: '/alumnos' },
     { name: 'Maestros', link: '/maestros' },
     { name: 'Calificaciones', link: '/calificaciones' },
+    
   ];
   activeLink: string | null = null;
 }
