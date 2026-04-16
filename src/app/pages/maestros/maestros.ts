@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { finalize, timeout } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MaestrosService, MaestroPayload, MaestroRecord } from '../../services/maestros.service';
 
 interface MaestroRow {
@@ -59,7 +59,7 @@ export class Maestros implements OnInit {
   });
 
   maestrosRegistrados: MaestroRow[] = [];
-  loading = false;
+  loading = true; // Empieza en true para mostrar la pantalla de carga
   submitting = false;
   errorMessage = '';
   private editingId: number | null = null;
@@ -74,7 +74,7 @@ export class Maestros implements OnInit {
 
     this.maestrosService
       .getAll()
-      .pipe(timeout(8000), finalize(() => (this.loading = false)))
+      .pipe(finalize(() => (this.loading = false))) // Se quitó timeout()
       .subscribe({
         next: (rows) => {
           this.maestrosRegistrados = rows.map((row) => this.toUiRow(row));
@@ -92,18 +92,25 @@ export class Maestros implements OnInit {
     }
 
     const payload = this.toPayload();
-    const request$ = this.editingId
-      ? this.maestrosService.update(this.editingId, payload)
+    const isEditing = this.editingId !== null;
+    const request$ = isEditing
+      ? this.maestrosService.update(this.editingId!, payload)
       : this.maestrosService.create(payload);
 
     this.submitting = true;
     request$.pipe(finalize(() => (this.submitting = false))).subscribe({
-      next: () => {
+      next: (response) => {
+        if (isEditing) {
+          this.maestrosRegistrados = this.maestrosRegistrados.map((m) =>
+            m.id === response.id ? this.toUiRow(response) : m
+          );
+        } else {
+          this.maestrosRegistrados = [...this.maestrosRegistrados, this.toUiRow(response)];
+        }
         this.clear();
-        this.loadMaestros();
       },
       error: () => {
-        this.errorMessage = this.editingId
+        this.errorMessage = isEditing
           ? 'No se pudo actualizar el maestro.'
           : 'No se pudo guardar el maestro.';
       },
@@ -127,7 +134,7 @@ export class Maestros implements OnInit {
         if (this.editingId === maestro.id) {
           this.clear();
         }
-        this.loadMaestros();
+        this.maestrosRegistrados = this.maestrosRegistrados.filter((m) => m.id !== maestro.id);
       },
       error: () => {
         this.errorMessage = 'No se pudo eliminar el maestro.';

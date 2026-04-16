@@ -1,3 +1,8 @@
+<div *ngIf="loading" style="text-align: center; padding: 100px; color: #666;">
+  <h2>Conectando con la base de datos...</h2>
+  <p>Por favor espera un momento.</p>
+</div>
+
 <section class="page-shell">
   <mat-card>
     <mat-card-header>
@@ -49,7 +54,6 @@
     </mat-card-header>
 
     <mat-card-content>
-      <p class="status-text" *ngIf="loading">Cargando maestros...</p>
       <p class="status-text error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
       <div class="table-wrapper">

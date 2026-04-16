@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { finalize, timeout } from 'rxjs';
+import { finalize } from 'rxjs';
 import { AlumnoPayload, AlumnoRecord, AlumnosService } from '../../services/alumnos.service';
 
 interface AlumnoRow {
@@ -62,7 +62,7 @@ export class Alumnos implements OnInit {
   });
 
   alumnosRegistrados: AlumnoRow[] = [];
-  loading = false;
+  loading = true; // Empieza en true
   submitting = false;
   errorMessage = '';
   private editingId: number | null = null;
@@ -77,7 +77,7 @@ export class Alumnos implements OnInit {
 
     this.alumnosService
       .getAll()
-      .pipe(timeout(8000), finalize(() => (this.loading = false)))
+      .pipe(finalize(() => (this.loading = false))) // Se quitó timeout()
       .subscribe({
         next: (rows) => {
           this.alumnosRegistrados = rows.map((row) => this.toUiRow(row));
@@ -95,18 +95,25 @@ export class Alumnos implements OnInit {
     }
 
     const payload = this.toPayload();
-    const request$ = this.editingId
-      ? this.alumnosService.update(this.editingId, payload)
+    const isEditing = this.editingId !== null;
+    const request$ = isEditing
+      ? this.alumnosService.update(this.editingId!, payload)
       : this.alumnosService.create(payload);
 
     this.submitting = true;
     request$.pipe(finalize(() => (this.submitting = false))).subscribe({
-      next: () => {
+      next: (response) => {
+        if (isEditing) {
+          this.alumnosRegistrados = this.alumnosRegistrados.map((a) =>
+            a.id === response.id ? this.toUiRow(response) : a
+          );
+        } else {
+          this.alumnosRegistrados = [...this.alumnosRegistrados, this.toUiRow(response)];
+        }
         this.clear();
-        this.loadAlumnos();
       },
       error: () => {
-        this.errorMessage = this.editingId
+        this.errorMessage = isEditing
           ? 'No se pudo actualizar el alumno.'
           : 'No se pudo guardar el alumno.';
       },
@@ -131,7 +138,7 @@ export class Alumnos implements OnInit {
         if (this.editingId === alumno.id) {
           this.clear();
         }
-        this.loadAlumnos();
+        this.alumnosRegistrados = this.alumnosRegistrados.filter((a) => a.id !== alumno.id);
       },
       error: () => {
         this.errorMessage = 'No se pudo eliminar el alumno.';
