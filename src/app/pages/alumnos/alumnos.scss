@@ -1,4 +1,58 @@
-body{
-    margin: 0;
-    background-color: yellow;
+.page-shell {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+mat-card {
+  border-radius: 16px;
+}
+
+.entity-form {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.status-text {
+  margin: 0.75rem 0;
+  color: #4b5563;
+}
+
+.status-text.error {
+  color: #b91c1c;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+table {
+  width: 100%;
+  min-width: 980px;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .entity-form {
+    grid-template-columns: 1fr;
+  }
 }

@@ -78,8 +78,7 @@
 
       <p class="error-msg general-error" *ngIf="authError">{{ authError }}</p>
 
-      <button class="submit-btn" type="submit" [disabled]="form.invalid">Iniciar sesion</button>
-
+      <button class="submit-btn" type="submit" [disabled]="form.invalid || isSubmitting">{{ isSubmitting ? 'Validando...' : 'Iniciar sesion' }}</button>
       <div class="divider"><span>O continua con</span></div>
 
       <div class="social-row">

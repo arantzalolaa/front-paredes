@@ -1,1 +1,121 @@
-<p>alumnos works!</p>
+<section class="page-shell">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditing ? 'Editar alumno' : 'Nuevo alumno' }}</mat-card-title>
+      <mat-card-subtitle>Administra la información de los alumnos</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="entity-form" [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre *</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ingresa el nombre" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido *</mat-label>
+          <input matInput formControlName="apellido" placeholder="Ingresa el apellido" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Matrícula *</mat-label>
+          <input matInput formControlName="matricula" placeholder="Ingresa la matrícula" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Carrera *</mat-label>
+          <input matInput formControlName="carrera" placeholder="Ingresa la carrera" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Semestre *</mat-label>
+          <input matInput formControlName="semestre" placeholder="Ingresa el semestre" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>Correo electrónico *</mat-label>
+          <input matInput formControlName="correo" placeholder="Ingresa el correo electrónico" />
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="submitting">
+            {{ isEditing ? 'Actualizar' : 'Guardar' }}
+          </button>
+          <button mat-stroked-button type="button" (click)="clear()">Limpiar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Alumnos registrados</mat-card-title>
+      <mat-card-subtitle>Datos obtenidos desde la base de datos</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p class="status-text" *ngIf="loading">Cargando alumnos...</p>
+      <p class="status-text error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="alumnosRegistrados" class="mat-elevation-z0">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.nombre }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="apellido">
+            <th mat-header-cell *matHeaderCellDef>Apellido</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.apellido }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="matricula">
+            <th mat-header-cell *matHeaderCellDef>Matrícula</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.matricula }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="carrera">
+            <th mat-header-cell *matHeaderCellDef>Carrera</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.carrera }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="semestre">
+            <th mat-header-cell *matHeaderCellDef>Semestre</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.semestre }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="correo">
+            <th mat-header-cell *matHeaderCellDef>Correo electrónico</th>
+            <td mat-cell *matCellDef="let alumno">{{ alumno.correo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let alumno" class="actions-cell">
+              <button mat-icon-button type="button" aria-label="Asistente IA">
+                <mat-icon>smart_toy</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Editar alumno" (click)="edit(alumno)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Eliminar alumno" (click)="remove(alumno)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">No hay alumnos registrados.</td>
+          </tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>
