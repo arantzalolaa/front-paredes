@@ -3,11 +3,14 @@ import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { finalize } from 'rxjs';
+import { finalize, timeout } from 'rxjs';
+import { AiSummaryDialog } from '../../shared/ai-summary-dialog/ai-summary-dialog';
+import { AiSummaryService } from '../../services/ai-summary.service';
 import { MaestrosService, MaestroPayload, MaestroRecord } from '../../services/maestros.service';
 
 interface MaestroRow {
@@ -37,6 +40,8 @@ interface MaestroRow {
 export class Maestros implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly maestrosService = inject(MaestrosService);
+  private readonly aiSummaryService = inject(AiSummaryService);
+  private readonly dialog = inject(MatDialog);
 
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
 
@@ -59,27 +64,47 @@ export class Maestros implements OnInit {
   });
 
   maestrosRegistrados: MaestroRow[] = [];
-  loading = true; // Empieza en true para mostrar la pantalla de carga
+  loading = false;
   submitting = false;
   errorMessage = '';
+  initializing = true;
+  initialLoadError = '';
+  summarizingId: number | null = null;
   private editingId: number | null = null;
 
   ngOnInit(): void {
-    this.loadMaestros();
+    this.loadMaestros(true);
   }
 
-  loadMaestros(): void {
+  retryInitialLoad(): void {
+    this.loadMaestros(true);
+  }
+
+  loadMaestros(isInitialLoad = false): void {
+    if (isInitialLoad) {
+      this.initializing = true;
+      this.initialLoadError = '';
+    }
+
     this.loading = true;
     this.errorMessage = '';
 
     this.maestrosService
       .getAll()
-      .pipe(finalize(() => (this.loading = false))) // Se quitó timeout()
+      .pipe(timeout(8000), finalize(() => (this.loading = false)))
       .subscribe({
         next: (rows) => {
           this.maestrosRegistrados = rows.map((row) => this.toUiRow(row));
+          this.initializing = false;
         },
         error: () => {
+          if (isInitialLoad) {
+            this.initializing = false;
+            this.initialLoadError =
+              'No se pudo conectar con la base de datos. Intenta nuevamente.';
+            return;
+          }
+
           this.errorMessage = 'No se pudieron cargar los maestros desde la base de datos.';
         },
       });
@@ -92,29 +117,55 @@ export class Maestros implements OnInit {
     }
 
     const payload = this.toPayload();
-    const isEditing = this.editingId !== null;
-    const request$ = isEditing
-      ? this.maestrosService.update(this.editingId!, payload)
+    const request$ = this.editingId
+      ? this.maestrosService.update(this.editingId, payload)
       : this.maestrosService.create(payload);
 
     this.submitting = true;
     request$.pipe(finalize(() => (this.submitting = false))).subscribe({
-      next: (response) => {
-        if (isEditing) {
-          this.maestrosRegistrados = this.maestrosRegistrados.map((m) =>
-            m.id === response.id ? this.toUiRow(response) : m
-          );
-        } else {
-          this.maestrosRegistrados = [...this.maestrosRegistrados, this.toUiRow(response)];
-        }
+      next: () => {
         this.clear();
+        this.loadMaestros();
       },
       error: () => {
-        this.errorMessage = isEditing
+        this.errorMessage = this.editingId
           ? 'No se pudo actualizar el maestro.'
           : 'No se pudo guardar el maestro.';
       },
     });
+  }
+
+  summarize(maestro: MaestroRow): void {
+    this.summarizingId = maestro.id;
+
+    this.aiSummaryService
+      .summarize('maestro', {
+        id: maestro.id,
+        nombre: maestro.nombre,
+        apellido: maestro.apellido,
+        numeroEmpleado: maestro.numeroEmpleado,
+        departamento: maestro.departamento,
+        correo: maestro.correoElectronico,
+      })
+      .pipe(finalize(() => (this.summarizingId = null)))
+      .subscribe({
+        next: (summary) => {
+          this.dialog.open(AiSummaryDialog, {
+            data: {
+              title: `Resumen IA: ${maestro.nombre} ${maestro.apellido}`,
+              summary,
+            },
+          });
+        },
+        error: () => {
+          this.dialog.open(AiSummaryDialog, {
+            data: {
+              title: `Resumen IA: ${maestro.nombre} ${maestro.apellido}`,
+              summary: 'No se pudo generar el resumen en este momento.',
+            },
+          });
+        },
+      });
   }
 
   edit(maestro: MaestroRow): void {
@@ -134,7 +185,7 @@ export class Maestros implements OnInit {
         if (this.editingId === maestro.id) {
           this.clear();
         }
-        this.maestrosRegistrados = this.maestrosRegistrados.filter((m) => m.id !== maestro.id);
+        this.loadMaestros();
       },
       error: () => {
         this.errorMessage = 'No se pudo eliminar el maestro.';
